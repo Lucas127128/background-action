@@ -7,7 +7,7 @@
     "lint": "eslint .",
     "build": "ncc build index.js -o dist --source-map",
     "test": "jest",
-    "all": "npm run lint && npm run build && npm run test",
+    "all": "pnpm run lint && pnpm run build && pnpm run test",
     "clean": "rm -rf dist && rm **/*.err && rm **/*.out"
   },
   "repository": {

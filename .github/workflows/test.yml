@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: npm ci
-      - run: npm test
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm test
 
   success:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - run: npm install
+      - run: pnpm i
       - uses: ./
         with:
           run: |

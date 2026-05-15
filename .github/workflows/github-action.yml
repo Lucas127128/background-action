@@ -14,8 +14,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - run: npm ci
-      - run: npm run build
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm run build
       - name: Publish to v1 branch
         run: |
           cp -r dist /tmp/publish
