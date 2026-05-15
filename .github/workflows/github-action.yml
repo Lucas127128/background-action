@@ -8,11 +8,22 @@ jobs:
   publish-github-action:
     runs-on: ubuntu-latest
     steps:
-      - name: 'Project holobranch github-action to v1'
-        uses: JarvusInnovations/hologit@actions/projector/v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HAB_LICENSE: accept
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          holobranch: github-action
-          commit-to: v1
+          node-version: "24"
+      - run: npm ci
+      - run: npm run build
+      - name: Publish to v1 branch
+        run: |
+          cp -r dist /tmp/publish
+          cp action.yml README.md LICENSE /tmp/publish/ 2>/dev/null || true
+          git fetch origin v1 2>/dev/null || true
+          git checkout --orphan v1-tmp
+          git rm -rfq .
+          cp -r /tmp/publish/* .
+          git add -A
+          git -c user.name="github-actions[bot]" \
+             -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+             commit -m "chore: publish v1 [skip ci]" --allow-empty
+          git push --force origin v1-tmp:v1
