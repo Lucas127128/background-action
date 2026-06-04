@@ -16,6 +16,7 @@ jobs:
         with:
           version: 11
       - run: pnpm i --frozen-lockfile
+      - run: pnpm approve-builds -y
       - run: pnpm test
 
   success:
@@ -28,7 +29,8 @@ jobs:
       - uses: pnpm/action-setup@v6
         with:
           version: 11
-      - run: pnpm i
+      - run: pnpm i --frozen-lockfile
+      - run: pnpm approve-builds -y
       - run: pnpm build
       - uses: ./
         with:
