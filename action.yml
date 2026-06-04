@@ -38,5 +38,5 @@ inputs:
 
 runs:
   using: "node24"
-  main: "index.js"
-  post: "index.js"
+  main: "background-action.js"
+  post: "background-action.js"
