@@ -16,7 +16,6 @@ jobs:
         with:
           version: 11
       - run: pnpm i --frozen-lockfile
-      - run: pnpm approve-builds -y
       - run: pnpm test
 
   success:
@@ -30,7 +29,6 @@ jobs:
         with:
           version: 11
       - run: pnpm i --frozen-lockfile
-      - run: pnpm approve-builds -y
       - run: pnpm build
       - uses: ./
         with:

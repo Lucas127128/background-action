@@ -18,7 +18,6 @@ jobs:
         with:
           version: 11
       - run: pnpm i --frozen-lockfile
-      - run: pnpm approve-builds -y
       - run: pnpm run build
       - name: Publish to v1 branch
         run: |
