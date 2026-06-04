@@ -1,25 +1,30 @@
-import process from "process";
-import cp from "child_process";
-import core from "@actions/core";
-import pkg from "../package.json";
-import exitEarlyEnv from "./exit-early-env.js";
-import { test, expect, vi } from "vitest";
+import process from 'process';
+import cp from 'child_process';
+import core from '@actions/core';
+import pkg from '../package.json';
+import exitEarlyEnv from './exit-early-env.js';
+import { test, expect, vi } from 'vitest';
 
 vi.setConfig({ testTimeout: 60000 });
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test("exit-early", (done) => {
+test('exit-early', (done) => {
   Object.assign(process.env, exitEarlyEnv);
 
   const main = cp.spawn(
-    "bash",
-    ["--noprofile", "--norc", "-eo", "pipefail", "-c", `node ${pkg.main}`],
+    'bash',
+    ['--noprofile', '--norc', '-eo', 'pipefail', '-c', `node ${pkg.main}`],
     { detached: false, env: process.env },
   );
 
-  main.stdout.on("data", (data) => {
-    if (data.toString().startsWith("::save-state name=")) {
-      const [name, val] = data.toString().split("\n")[0].split("=").pop().split("::");
+  main.stdout.on('data', (data) => {
+    if (data.toString().startsWith('::save-state name=')) {
+      const [name, val] = data
+        .toString()
+        .split('\n')[0]
+        .split('=')
+        .pop()
+        .split('::');
       process.env[`STATE_${name}`] = val;
     }
     // console.log(`main: stdout: ${data}`)
@@ -29,21 +34,21 @@ test("exit-early", (done) => {
         console.error(`main: stderr: ${data}`)
     })*/
 
-  main.on("close", (code) => {
+  main.on('close', (code) => {
     console.log(`main exited with code ${code}`);
 
-    const pid = core.getState("post-run");
+    const pid = core.getState('post-run');
     expect(pid).toBeDefined();
-    const stdout = core.getState("stdout");
+    const stdout = core.getState('stdout');
     expect(stdout).toBeDefined();
-    const stderr = core.getState("stderr");
+    const stderr = core.getState('stderr');
     expect(stderr).toBeDefined();
     const reason = core.getState(`reason_${pid}`);
-    expect(reason).toEqual("exit-early");
+    expect(reason).toEqual('exit-early');
 
     const post = cp.spawn(
-      "bash",
-      ["--noprofile", "--norc", "-eo", "pipefail", "-c", "node post-run.js"],
+      'bash',
+      ['--noprofile', '--norc', '-eo', 'pipefail', '-c', 'node post-run.js'],
       { detached: false, env: process.env },
     );
 
@@ -52,12 +57,13 @@ test("exit-early", (done) => {
     let sawStdErrGroup = false;
     let sawGroupEnd = 0;
 
-    post.stdout.on("data", (data) => {
+    post.stdout.on('data', (data) => {
       data = data.toString();
       // console.log(`post: stdout: ${data}`)
 
-      if (data.includes("::group::Truncated Error Output:")) sawStdErrGroup = true;
-      if (data.includes("::group::Output:")) sawStdOutGroup = true;
+      if (data.includes('::group::Truncated Error Output:'))
+        sawStdErrGroup = true;
+      if (data.includes('::group::Output:')) sawStdOutGroup = true;
       sawGroupEnd += (data.match(/::endgroup::/g) || []).length;
     });
 
@@ -65,7 +71,7 @@ test("exit-early", (done) => {
     // console.error(`post: stderr: ${data}`)
     //})
 
-    post.on("close", (code) => {
+    post.on('close', (code) => {
       console.log(`post exited with code ${code}`);
       expect(sawGroupEnd).toEqual(2);
       expect(sawStdOutGroup).toEqual(true);

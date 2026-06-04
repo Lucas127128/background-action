@@ -1,12 +1,12 @@
-import core from "@actions/core";
-import WaitOn from "wait-on";
-import { Tail } from "tail";
-import path from "path";
-import { spawn } from "child_process";
-import inputs from "./input.js";
+import core from '@actions/core';
+import WaitOn from 'wait-on';
+import { Tail } from 'tail';
+import path from 'path';
+import { spawn } from 'child_process';
+import inputs from './input.js';
 
 const { run, workingDirectory, waitOn, tail, logOutput } = inputs;
-const POST_RUN = core.getState("post-run");
+const POST_RUN = core.getState('post-run');
 
 let stderr, stdout;
 
@@ -16,12 +16,12 @@ if (core.isDebug()) {
 
 // serve as the entry-point for both main and post-run invocations
 if (POST_RUN) {
-  import("./post-run.js");
+  import('./post-run.js');
 } else {
   (async function () {
-    core.saveState("post-run", process.pid);
+    core.saveState('post-run', process.pid);
 
-    const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
+    const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || './';
     const stdErrFile = path.join(cwd, `${process.pid}.err`);
     const stdOutFile = path.join(cwd, `${process.pid}.out`);
 
@@ -37,7 +37,7 @@ if (POST_RUN) {
 
     runCommand(run);
 
-    WaitOn(waitOn, (err) => exitHandler(err, err ? "timeout" : "success"));
+    WaitOn(waitOn, (err) => exitHandler(err, err ? 'timeout' : 'success'));
   })();
 }
 
@@ -46,8 +46,8 @@ async function exitHandler(error, reason) {
   if (stderr && stderr.unwatch) stderr.unwatch();
 
   core.saveState(`reason_${process.pid}`, reason);
-  if (stdout && stdout.pos) core.saveState("stdout", stdout.pos);
-  if (stderr && stderr.pos) core.saveState("stderr", stderr.pos);
+  if (stdout && stdout.pos) core.saveState('stdout', stdout.pos);
+  if (stderr && stderr.pos) core.saveState('stderr', stderr.pos);
 
   if (error) {
     core.error(error);
@@ -59,7 +59,7 @@ async function exitHandler(error, reason) {
 function runCommand(run) {
   let cmd = `(${run} wait)`;
 
-  const spawnOpts = { detached: true, stdio: "ignore" };
+  const spawnOpts = { detached: true, stdio: 'ignore' };
 
   if (workingDirectory) spawnOpts.cwd = workingDirectory;
 
@@ -69,9 +69,15 @@ function runCommand(run) {
   if (pipeStdout) cmd += ` > ${process.pid}.out`;
   if (pipeStderr) cmd += ` 2> ${process.pid}.err`;
 
-  const shell = spawn("bash", ["--noprofile", "--norc", "-eo", "pipefail", "-c", cmd], spawnOpts);
-  shell.on("error", (err) => exitHandler(err, "exit-early"));
-  shell.on("close", () => exitHandler(new Error("Exited early"), "exit-early"));
+  const shell = spawn(
+    'bash',
+    ['--noprofile', '--norc', '-eo', 'pipefail', '-c', cmd],
+    spawnOpts,
+  );
+  shell.on('error', (err) => exitHandler(err, 'exit-early'));
+  shell.on('close', () =>
+    exitHandler(new Error('Exited early'), 'exit-early'),
+  );
 }
 
 function TailWrapper(filename, shouldTail, output) {
@@ -79,11 +85,14 @@ function TailWrapper(filename, shouldTail, output) {
 
   try {
     const tail = new Tail(filename, { flushAtEOF: true });
-    tail.on("line", output);
-    tail.on("error", core.warning);
+    tail.on('line', output);
+    tail.on('error', core.warning);
     return tail;
   } catch (e) {
-    console.warn("background-action tried to tail a file before it was ready....", e);
+    console.warn(
+      'background-action tried to tail a file before it was ready....',
+      e,
+    );
     return false;
   }
 }

@@ -1,23 +1,24 @@
-import core from "@actions/core";
-import inputs from "./input.js";
-import fs from "fs";
-import path from "path";
+import core from '@actions/core';
+import inputs from './input.js';
+import fs from 'fs';
+import path from 'path';
 
 const { logOutput, logOutputResume, logOutputIf, workingDirectory } = inputs;
 
-const pid = core.getState("post-run");
+const pid = core.getState('post-run');
 const reason = core.getState(`reason_${pid}`);
-const stdout = parseInt(core.getState("stdout") || 0, 10);
-const stderr = parseInt(core.getState("stderr") || 0, 10);
+const stdout = parseInt(core.getState('stdout') || 0, 10);
+const stderr = parseInt(core.getState('stderr') || 0, 10);
 
-const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || "./";
+const cwd = workingDirectory || process.env.GITHUB_WORKSPACE || './';
 const stdoutPath = path.join(cwd, `${pid}.out`);
 const stderrPath = path.join(cwd, `${pid}.err`);
 
 const shouldLog =
-  logOutputIf === "true" ||
+  logOutputIf === 'true' ||
   logOutputIf === reason ||
-  (logOutputIf === "failure" && (reason === "exit-early" || reason === "timeout"));
+  (logOutputIf === 'failure' &&
+    (reason === 'exit-early' || reason === 'timeout'));
 
 if (core.isDebug()) {
   core.debug(`stdout: ${stdout}`);
@@ -39,11 +40,11 @@ function streamLog(path, start) {
     const log = fs.createReadStream(path, {
       start,
       emitClose: true,
-      encoding: "utf8",
+      encoding: 'utf8',
       autoClose: true,
     });
-    log.on("close", () => resolve(null));
-    log.on("error", (err) => reject(err));
+    log.on('close', () => resolve(null));
+    log.on('error', (err) => reject(err));
     log.pipe(process.stdout);
   });
 }
@@ -52,27 +53,35 @@ async function streamLogs() {
   if (logOutput.stdout) {
     const start = logOutputResume.stdout ? stdout : 0;
     const truncated = start > 0;
-    await core.group(`${logOutputResume.stdout ? "Truncated " : ""}Output:`, async () => {
-      if (truncated) console.log(`Truncated ${start} bytes of tailed stdout output`);
-      try {
-        await streamLog(stdoutPath, start);
-      } catch (err) {
-        console.error("Error streaming stdout:", err);
-      }
-    });
+    await core.group(
+      `${logOutputResume.stdout ? 'Truncated ' : ''}Output:`,
+      async () => {
+        if (truncated)
+          console.log(`Truncated ${start} bytes of tailed stdout output`);
+        try {
+          await streamLog(stdoutPath, start);
+        } catch (err) {
+          console.error('Error streaming stdout:', err);
+        }
+      },
+    );
   }
 
   if (logOutput.stderr) {
     const start = logOutputResume.stderr ? stderr : 0;
     const truncated = start > 0;
-    await core.group(`${logOutputResume.stderr ? "Truncated " : ""}Error Output:`, async () => {
-      if (truncated) console.log(`Truncated ${start} bytes of tailed stderr output`);
-      try {
-        await streamLog(stderrPath, start);
-      } catch (err) {
-        console.error("Error streaming stderr:", err);
-      }
-    });
+    await core.group(
+      `${logOutputResume.stderr ? 'Truncated ' : ''}Error Output:`,
+      async () => {
+        if (truncated)
+          console.log(`Truncated ${start} bytes of tailed stderr output`);
+        try {
+          await streamLog(stderrPath, start);
+        } catch (err) {
+          console.error('Error streaming stderr:', err);
+        }
+      },
+    );
   }
 }
 
@@ -82,7 +91,7 @@ async function streamLogs() {
       await streamLogs();
     }
   } catch (err) {
-    console.error("Error streaming logs:", err);
+    console.error('Error streaming logs:', err);
   } finally {
     process.exit(0);
   }

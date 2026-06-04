@@ -1,45 +1,45 @@
-import process from "process";
-import cp from "child_process";
-import core from "@actions/core";
-import pkg from "../package.json";
-import workingDirectoryEnv from "./working-directory-env.js";
-import { test, expect, vi } from "vitest";
+import process from 'process';
+import cp from 'child_process';
+import core from '@actions/core';
+import pkg from '../package.json';
+import workingDirectoryEnv from './working-directory-env.js';
+import { test, expect, vi } from 'vitest';
 
 vi.setConfig({ testTimeout: 60000 });
 
 // shows how the runner will run a javascript action with env / stdout protocol
-test("working-directory", (done) => {
+test('working-directory', (done) => {
   Object.assign(process.env, workingDirectoryEnv);
 
   const main = cp.spawnSync(
-    "bash",
-    ["--noprofile", "--norc", "-eo", "pipefail", "-c", `node ${pkg.main}`],
-    { env: process.env, encoding: "utf-8" },
+    'bash',
+    ['--noprofile', '--norc', '-eo', 'pipefail', '-c', `node ${pkg.main}`],
+    { env: process.env, encoding: 'utf-8' },
   );
 
-  main.stdout.split("\n").forEach((line) => {
-    if (line.startsWith("::save-state name=")) {
-      const [name, val] = line.split("\n")[0].split("=").pop().split("::");
+  main.stdout.split('\n').forEach((line) => {
+    if (line.startsWith('::save-state name=')) {
+      const [name, val] = line.split('\n')[0].split('=').pop().split('::');
       process.env[`STATE_${name}`] = val;
     }
   });
 
   setTimeout(() => {
-    const workingDirectory = core.getInput("working-directory");
-    expect(workingDirectory).toEqual("test");
-    const pid = core.getState("post-run");
+    const workingDirectory = core.getInput('working-directory');
+    expect(workingDirectory).toEqual('test');
+    const pid = core.getState('post-run');
     expect(pid).toBeDefined();
-    const stdout = core.getState("stdout");
+    const stdout = core.getState('stdout');
     expect(stdout).toBeDefined();
-    const stderr = core.getState("stderr");
+    const stderr = core.getState('stderr');
     expect(stderr).toBeDefined();
     const reason = core.getState(`reason_${pid}`);
     console.log(`reason_${pid}`);
-    expect(reason).toEqual("success");
+    expect(reason).toEqual('success');
 
     const post = cp.spawn(
-      "bash",
-      ["--noprofile", "--norc", "-eo", "pipefail", "-c", "node post-run.js"],
+      'bash',
+      ['--noprofile', '--norc', '-eo', 'pipefail', '-c', 'node post-run.js'],
       { detached: false, env: process.env },
     );
 
@@ -48,20 +48,20 @@ test("working-directory", (done) => {
     let sawStdErrGroup = false;
     let sawGroupEnd = 0;
 
-    post.stdout.on("data", (data) => {
+    post.stdout.on('data', (data) => {
       data = data.toString();
       console.log(`post: stdout: ${data}`);
 
-      if (data.includes("::group::Error Output:")) sawStdErrGroup = true;
-      if (data.includes("::group::Output:")) sawStdOutGroup = true;
+      if (data.includes('::group::Error Output:')) sawStdErrGroup = true;
+      if (data.includes('::group::Output:')) sawStdOutGroup = true;
       sawGroupEnd += (data.match(/::endgroup::/g) || []).length;
     });
 
-    post.stderr.on("data", (data) => {
+    post.stderr.on('data', (data) => {
       console.error(`post: stderr: ${data}`);
     });
 
-    post.on("close", (code) => {
+    post.on('close', (code) => {
       console.log(`post exited with code ${code}`);
       // this should only log on failure, so we don't expect any of this
       expect(sawStdOutGroup).toEqual(false);

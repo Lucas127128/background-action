@@ -1,4 +1,4 @@
-name: "background-action"
+name: 'background-action'
 branding:
   color: orange
   icon: terminal
@@ -13,7 +13,7 @@ inputs:
     required: false
 
   wait-on:
-    description: "resources to wait on -- separated by commas or newlines, supported prefixes: [file,http,https,http-get,https-get,tcp,socket] (for advanced usage, pass a JSON serialized wait-on config)"
+    description: 'resources to wait on -- separated by commas or newlines, supported prefixes: [file,http,https,http-get,https-get,tcp,socket] (for advanced usage, pass a JSON serialized wait-on config)'
     required: false
 
   wait-for:
@@ -37,6 +37,6 @@ inputs:
     default: true
 
 runs:
-  using: "node24"
-  main: "index.js"
-  post: "index.js"
+  using: 'node24'
+  main: 'index.js'
+  post: 'index.js'

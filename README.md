@@ -73,7 +73,7 @@ jobs:
 ### Configuration
 
 | Parameter           | Description                                                          | Allowed Values                                  | Default         |
-|---------------------|----------------------------------------------------------------------|-------------------------------------------------|-----------------|
+| ------------------- | -------------------------------------------------------------------- | ----------------------------------------------- | --------------- |
 | `run`               | Commands to run, supports multiple lines                             |                                                 |                 |
 | `wait-on`           | What resources to wait for: `http\|tcp\|file\|socket\|unix://`       | See `wait-on` below                             |                 |
 | `wait-for`          | How long to wait for (default unit: `ms`)                            | `#ms, #s/sec, #m/min, #h/hr`                    | `5m`            |
@@ -90,7 +90,7 @@ jobs:
 #### Resource Types
 
 | Prefix             | Description                      | Example                                  |
-|--------------------|----------------------------------|------------------------------------------|
+| ------------------ | -------------------------------- | ---------------------------------------- |
 | `file:`            | Regular file (also default type) | `file:/path/to/file`                     |
 | `http:`            | HTTP HEAD returns 2XX response   | `http://m.com:90/foo`                    |
 | `https:`           | HTTPS HEAD returns 2XX response  | `https://my/bar`                         |
