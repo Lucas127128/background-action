@@ -6,5 +6,6 @@ export default defineConfig({
       entry: "index.js",
       formats: ["es"],
     },
+    sourcemap: true,
   },
 });
