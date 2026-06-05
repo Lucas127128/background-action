@@ -4,7 +4,7 @@ await build({
   entryPoints: ['index.js'],
   bundle: true,
   platform: 'node',
-  format: 'esm',
+  format: 'cjs',
   target: 'node24',
   minify: true,
   outdir: 'dist',
