@@ -89,7 +89,7 @@ test('success', async () => {
       // output is in order
       expect(postPids[pid][kind]).toBeLessThanOrEqual(count);
       // output resumes properly
-      expect(count).toBeGreaterThan(pids[pid][kind]);
+      expect(count).toBeGreaterThan((pids[pid] && pids[pid][kind]) ?? -1);
       postPids[pid][kind] = count;
     }
   });

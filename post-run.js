@@ -37,15 +37,20 @@ if (core.isDebug()) {
 
 function streamLog(path, start) {
   return new Promise((resolve, reject) => {
-    const log = fs.createReadStream(path, {
-      start,
-      emitClose: true,
-      encoding: 'utf8',
-      autoClose: true,
+    fs.stat(path, (err, stats) => {
+      if (err) return reject(err);
+      if (start >= stats.size) return resolve(null);
+      const log = fs.createReadStream(path, {
+        start,
+        end: stats.size - 1,
+        emitClose: true,
+        encoding: 'utf8',
+        autoClose: true,
+      });
+      log.on('close', () => resolve(null));
+      log.on('error', (err) => reject(err));
+      log.pipe(process.stdout);
     });
-    log.on('close', () => resolve(null));
-    log.on('error', (err) => reject(err));
-    log.pipe(process.stdout);
   });
 }
 
