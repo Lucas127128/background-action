@@ -9,5 +9,6 @@ export default defineConfig({
     dir: 'dist',
     format: 'cjs',
     minify: true,
+    inlineDynamicImports: true,
   },
 });
