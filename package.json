@@ -25,7 +25,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "oxlint",
-    "build": "esbuild index.js --bundle --outfile=dist/index.js --platform=node",
+    "build": "node esbuild.config.ts",
     "test": "vitest run",
     "all": "pnpm run lint && pnpm run build && pnpm run test",
     "clean": "rm -rf dist && rm -f ./**/*.err && rm -f ./**/*.out",

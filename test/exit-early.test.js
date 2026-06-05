@@ -27,12 +27,7 @@ test('exit-early', (done) => {
         .split('::');
       process.env[`STATE_${name}`] = val;
     }
-    // console.log(`main: stdout: ${data}`)
   });
-
-  /*main.stderr.on('data', (data) => {
-        console.error(`main: stderr: ${data}`)
-    })*/
 
   main.on('close', (code) => {
     console.log(`main exited with code ${code}`);
@@ -59,17 +54,12 @@ test('exit-early', (done) => {
 
     post.stdout.on('data', (data) => {
       data = data.toString();
-      // console.log(`post: stdout: ${data}`)
 
       if (data.includes('::group::Truncated Error Output:'))
         sawStdErrGroup = true;
       if (data.includes('::group::Output:')) sawStdOutGroup = true;
       sawGroupEnd += (data.match(/::endgroup::/g) || []).length;
     });
-
-    //post.stderr.on('data', (data) => {
-    // console.error(`post: stderr: ${data}`)
-    //})
 
     post.on('close', (code) => {
       console.log(`post exited with code ${code}`);
