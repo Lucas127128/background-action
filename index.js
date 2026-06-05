@@ -46,8 +46,8 @@ async function exitHandler(error, reason) {
   if (stderr && stderr.unwatch) stderr.unwatch();
 
   core.saveState(`reason_${process.pid}`, reason);
-  if (stdout && stdout.pos) core.saveState('stdout', stdout.pos);
-  if (stderr && stderr.pos) core.saveState('stderr', stderr.pos);
+  if (stdout && stdout.currentCursorPos) core.saveState('stdout', stdout.currentCursorPos);
+  if (stderr && stderr.currentCursorPos) core.saveState('stderr', stderr.currentCursorPos);
 
   if (error) {
     core.error(error);
