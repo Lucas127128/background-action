@@ -22,7 +22,7 @@ jobs:
       - name: Publish to v1 branch
         run: |
           mkdir -p /tmp/publish
-          cp action.yml README.md LICENSE /tmp/publish/ 2>/dev/null || true
+          cp dist/index.js action.yml README.md LICENSE /tmp/publish/ 2>/dev/null || true
           git fetch origin v1 2>/dev/null || true
           git checkout --orphan v1-tmp
           git rm -rfq .
