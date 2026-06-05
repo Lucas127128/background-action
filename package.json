@@ -35,7 +35,7 @@
     "@actions/core": "^3.0.1",
     "parse-duration": "^1.1.2",
     "tail": "2.1.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^9.0.10"
   },
   "devDependencies": {
     "oxfmt": "^0.53.0",
