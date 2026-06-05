@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: "24"
       - uses: pnpm/action-setup@v6
         with:
           version: 11
@@ -21,11 +21,13 @@ jobs:
       - run: pnpm run build
       - name: Publish to v1 branch
         run: |
-          cp -r dist /tmp/publish
+          mkdir -p /tmp/publish
           cp action.yml README.md LICENSE /tmp/publish/ 2>/dev/null || true
           git fetch origin v1 2>/dev/null || true
           git checkout --orphan v1-tmp
           git rm -rfq .
+          rm -rf node_modules
+          ls /tmp/publish
           cp -r /tmp/publish/* .
           git add -A
           git -c user.name="github-actions[bot]" \
