@@ -1,6 +1,6 @@
 import process from 'process';
 import cp from 'child_process';
-import core from '@actions/core';
+import * as core from '@actions/core';
 import pkg from '../package.json';
 import truncateEnv from './truncate-env.js';
 import { test, expect, vi } from 'vitest';

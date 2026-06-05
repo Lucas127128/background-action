@@ -1,4 +1,4 @@
-import core from '@actions/core';
+import * as core from '@actions/core';
 import WaitOn from 'wait-on';
 import { Tail } from 'tail';
 import path from 'path';
